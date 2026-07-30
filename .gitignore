@@ -1,0 +1,25 @@
+# Build output
+bin/
+dist/
+*.exe
+*.test
+*.out
+
+# Test and coverage output
+coverage.out
+coverage.html
+
+# Environment files
+.env
+.env.*
+
+# IDE
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Others
+requirement.md
