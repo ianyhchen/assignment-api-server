@@ -30,6 +30,8 @@ No third-party web framework or database is planned. Go's standard HTTP router
 is sufficient for the four required routes, while an in-memory store keeps the
 scope aligned with the assignment.
 
+The HTTP transport uses standard net/http. It is isolated from the application service, so replacing ServeMux with a compatible router would be limited to the routing layer.
+
 ## Task Model
 
 A task contains the following fields:
