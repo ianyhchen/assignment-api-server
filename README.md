@@ -51,8 +51,8 @@ go run ./cmd/api
 ### Run with Docker
 
 ```bash
-docker build -t assignment-api-server:local .
-docker run --rm -p 8080:8080 assignment-api-server:local
+docker build -t assignment-api-server .
+docker run --rm -p 8080:8080 assignment-api-server
 ```
 
 Verify that the API is running:
@@ -198,7 +198,6 @@ Errors use a consistent JSON representation:
 | --- | --- |
 | Invalid path parameter or request body | `400 Bad Request` |
 | Task does not exist | `404 Not Found` |
-| Request context deadline exceeded | `504 Gateway Timeout` |
 | Unexpected server failure | `500 Internal Server Error` |
 
 Unexpected errors and recovered panic details are logged but are not exposed in
@@ -212,6 +211,9 @@ HTTP responses.
 |   `-- api/
 |       |-- main.go
 |       `-- main_test.go
+|-- .github/
+|   `-- workflows/
+|       `-- ci.yaml
 |-- internal/
 |   |-- task/
 |   |   |-- model.go
@@ -233,6 +235,7 @@ HTTP responses.
 |       |-- response_test.go
 |       |-- router.go
 |       `-- router_test.go
+|-- .golangci.yml
 |-- Dockerfile
 |-- .dockerignore
 |-- go.mod
@@ -281,8 +284,8 @@ accepting new requests and waits up to 10 seconds for active requests.
 To verify container shutdown behavior:
 
 ```bash
-docker run -d --name assignment-api-server -p 8080:8080 assignment-api-server:local
-docker stop --time 15 assignment-api-server
+docker run -d --name assignment-api-server -p 8080:8080 assignment-api-server
+docker stop --timeout 15 assignment-api-server
 docker logs assignment-api-server
 docker rm assignment-api-server
 ```
