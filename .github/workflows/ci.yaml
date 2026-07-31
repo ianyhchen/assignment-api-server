@@ -71,3 +71,22 @@ jobs:
 
       - name: Build image
         run: docker build --tag assignment-api-server:ci .
+  
+  lint:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: 1.26.3
+          cache: false
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.12.2
