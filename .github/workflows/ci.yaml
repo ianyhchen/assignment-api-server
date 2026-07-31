@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  go:
+    name: Go ${{ matrix.go-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version:
+          - 1.22.x
+          - 1.26.3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: false
+
+      - name: Check formatting
+        shell: bash
+        run: |
+          unformatted="$(gofmt -l .)"
+
+          if [ -n "$unformatted" ]; then
+            echo "The following files need formatting:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Run vet
+        run: go vet ./...
+
+      - name: Run tests
+        run: go test -count=1 ./...
+
+      - name: Run race detector
+        if: matrix.go-version == '1.26.3'
+        run: go test -race -count=1 ./...
+
+      - name: Build application
+        run: go build -trimpath -o /tmp/task-api ./cmd/api
+
+  docker:
+    name: Docker build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Build image
+        run: docker build --tag assignment-api-server:ci .
