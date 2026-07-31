@@ -129,7 +129,7 @@ func TestServiceCreateRejectsInvalidInput(t *testing.T) {
 			storeCalled := false
 
 			store := &fakeStore{
-				createFunc: func(_ context.Context, newTask Task) (Task, error) {
+				createFunc: func(_ context.Context, _ Task) (Task, error) {
 					storeCalled = true
 					return Task{}, nil
 				},
@@ -168,7 +168,7 @@ func TestServiceCreateWithCanceledContext(t *testing.T) {
 	storeCalled := false
 
 	store := &fakeStore{
-		createFunc: func(_ context.Context, newTask Task) (Task, error) {
+		createFunc: func(_ context.Context, _ Task) (Task, error) {
 			storeCalled = true
 			return Task{}, nil
 		},
@@ -197,7 +197,7 @@ func TestServiceCreatePropagatesStoreError(t *testing.T) {
 	storeErr := errors.New("storage unavailable")
 
 	store := &fakeStore{
-		createFunc: func(_ context.Context, newTask Task) (Task, error) {
+		createFunc: func(_ context.Context, _ Task) (Task, error) {
 			return Task{}, storeErr
 		},
 	}

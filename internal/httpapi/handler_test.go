@@ -82,7 +82,11 @@ func TestHandlerList(t *testing.T) {
 	handler.List(recorder, request)
 
 	response := recorder.Result()
-	defer response.Body.Close()
+	t.Cleanup(func() {
+		if err := response.Body.Close(); err != nil {
+			t.Errorf("close response body: %v", err)
+		}
+	})
 
 	if response.StatusCode != http.StatusOK {
 		t.Errorf("status = %d, want %d", response.StatusCode, http.StatusOK)
@@ -356,11 +360,7 @@ func TestHandlerUpdate(t *testing.T) {
 		updateFunc: func(_ context.Context, input task.UpdateInput) (task.Task, error) {
 			receivedInput = input
 
-			return task.Task{
-				ID:     input.ID,
-				Name:   input.Name,
-				Status: input.Status,
-			}, nil
+			return task.Task(input), nil
 		},
 	}
 
@@ -596,7 +596,7 @@ func TestHandlerDeleteRejectsInvalidID(t *testing.T) {
 			serviceCalled := false
 
 			service := &fakeTaskService{
-				deleteFunc: func(_ context.Context, id uint64) error {
+				deleteFunc: func(_ context.Context, _ uint64) error {
 					serviceCalled = true
 					return nil
 				},

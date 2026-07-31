@@ -1,3 +1,4 @@
+// Package main assembles and runs the task API server.
 package main
 
 import (

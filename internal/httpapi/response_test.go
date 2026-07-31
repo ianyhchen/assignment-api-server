@@ -24,7 +24,11 @@ func TestWriteJSON(t *testing.T) {
 	}
 
 	response := recorder.Result()
-	defer response.Body.Close()
+	t.Cleanup(func() {
+		if err := response.Body.Close(); err != nil {
+			t.Errorf("close response body: %v", err)
+		}
+	})
 
 	if response.StatusCode != http.StatusCreated {
 		t.Errorf("status = %d, want %d", response.StatusCode, http.StatusCreated)

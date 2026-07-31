@@ -1,3 +1,4 @@
+// Package memory provides an in-memory implementation of the task store.
 package memory
 
 import (
@@ -8,6 +9,7 @@ import (
 	"github.com/ianyhchen/assignment-api-server/internal/task"
 )
 
+// TaskStore stores tasks in memory and is safe for concurrent use.
 type TaskStore struct {
 	mu     sync.RWMutex
 	tasks  map[uint64]task.Task
@@ -17,12 +19,14 @@ type TaskStore struct {
 // Ensure at compile time that *TaskStore implements task.Store.
 var _ task.Store = (*TaskStore)(nil)
 
+// NewTaskStore creates an empty in-memory task store.
 func NewTaskStore() *TaskStore {
 	return &TaskStore{
 		tasks: make(map[uint64]task.Task),
 	}
 }
 
+// Create assigns an ID to a task and stores it.
 func (store *TaskStore) Create(ctx context.Context, newTask task.Task) (task.Task, error) {
 	if err := ctx.Err(); err != nil {
 		return task.Task{}, err
@@ -38,6 +42,7 @@ func (store *TaskStore) Create(ctx context.Context, newTask task.Task) (task.Tas
 	return newTask, nil
 }
 
+// List returns all stored tasks ordered by ID.
 func (store *TaskStore) List(ctx context.Context) ([]task.Task, error) {
 	if err := ctx.Err(); err != nil {
 		return nil, err
@@ -59,6 +64,7 @@ func (store *TaskStore) List(ctx context.Context) ([]task.Task, error) {
 	return tasks, nil
 }
 
+// Update replaces an existing task.
 func (store *TaskStore) Update(ctx context.Context, updatedTask task.Task) (task.Task, error) {
 	if err := ctx.Err(); err != nil {
 		return task.Task{}, err
@@ -76,6 +82,7 @@ func (store *TaskStore) Update(ctx context.Context, updatedTask task.Task) (task
 	return updatedTask, nil
 }
 
+// Delete removes an existing task by ID.
 func (store *TaskStore) Delete(ctx context.Context, id uint64) error {
 	if err := ctx.Err(); err != nil {
 		return err

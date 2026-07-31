@@ -1,3 +1,4 @@
+// Package httpapi provides the HTTP transport for task operations.
 package httpapi
 
 import (
@@ -39,6 +40,7 @@ type updateTaskRequest struct {
 	Status *task.Status `json:"status"`
 }
 
+// List handles requests to list all tasks.
 func (handler *Handler) List(w http.ResponseWriter, r *http.Request) {
 	tasks, err := handler.service.List(r.Context())
 	if err != nil {
@@ -56,6 +58,7 @@ func (handler *Handler) List(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Create handles requests to create a task.
 func (handler *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var request createTaskRequest
 
@@ -105,6 +108,7 @@ func (handler *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Update handles requests to replace a task's editable fields.
 func (handler *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	id, err := parseTaskID(r.PathValue("id"))
 	if err != nil {
@@ -162,6 +166,7 @@ func (handler *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Delete handles requests to delete a task.
 func (handler *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	id, err := parseTaskID(r.PathValue("id"))
 	if err != nil {

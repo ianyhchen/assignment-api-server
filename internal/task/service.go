@@ -6,27 +6,32 @@ import (
 	"strings"
 )
 
+// CreateInput contains the client-editable fields required to create a task.
 type CreateInput struct {
 	Name   string
 	Status Status
 }
 
+// UpdateInput contains the ID and replacement fields required to update a task.
 type UpdateInput struct {
 	ID     uint64
 	Name   string
 	Status Status
 }
 
+// Service applies task rules and coordinates persistence operations.
 type Service struct {
 	store Store
 }
 
+// NewService creates a task service backed by store.
 func NewService(store Store) *Service {
 	return &Service{
 		store: store,
 	}
 }
 
+// Create validates, normalizes, and stores a new task.
 func (service *Service) Create(ctx context.Context, input CreateInput) (Task, error) {
 	if err := ctx.Err(); err != nil {
 		return Task{}, err
@@ -65,6 +70,7 @@ func normalizeTaskFields(name string, status Status) (string, error) {
 	return normalizedName, nil
 }
 
+// List returns all tasks from the configured store.
 func (service *Service) List(ctx context.Context) ([]Task, error) {
 	if err := ctx.Err(); err != nil {
 		return nil, err
@@ -78,6 +84,7 @@ func (service *Service) List(ctx context.Context) ([]Task, error) {
 	return tasks, nil
 }
 
+// Update validates and replaces an existing task.
 func (service *Service) Update(ctx context.Context, input UpdateInput) (Task, error) {
 	if err := ctx.Err(); err != nil {
 		return Task{}, err
@@ -106,6 +113,7 @@ func (service *Service) Update(ctx context.Context, input UpdateInput) (Task, er
 	return result, nil
 }
 
+// Delete removes an existing task by ID.
 func (service *Service) Delete(ctx context.Context, id uint64) error {
 	if err := ctx.Err(); err != nil {
 		return err
