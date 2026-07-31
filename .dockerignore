@@ -1,0 +1,9 @@
+.git
+.github
+.gitignore
+.env
+*.exe
+*.out
+coverage.*
+README.md
+requirement.md
